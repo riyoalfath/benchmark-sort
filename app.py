@@ -15,7 +15,9 @@ def get_mysql_connection():
         database="benchmark_sort"
     )
 
-CPP_EXECUTABLE = './merge_sort'
+CPP_RADIX_EXECUTABLE = './bin/radix-sort'
+CPP_MERGE_EXECUTABLE = './bin/merge-sort'
+CPP_RADIX_MERGE_EXECUTABLE = "./bin/radix-merge-sort"
 DATA_CSV = './data/customer_shopping_data.csv'
 
 @app.route('/')
@@ -39,28 +41,28 @@ def all():
 
 @app.route('/cpp-sort')
 def cpp_sort():
-    # ambil parameter sort field
-    sort_field = request.args.get("field")
+    field = request.args.get("field")
+    algo = request.args.get("algo")  # ⬅ ambil dari frontend
 
-    # jalankan C++ dengan argumen sort_field
-    result = subprocess.run(
-        [CPP_EXECUTABLE, sort_field],
-        capture_output=True,
-        text=True
-    )
+    if algo == "RADIX":
+        exe = CPP_RADIX_EXECUTABLE
+    elif algo == "MERGE":
+        exe = CPP_MERGE_EXECUTABLE
+    elif algo == "RADIX MERGE":
+        exe = CPP_RADIX_MERGE_EXECUTABLE
+    else:
+        return jsonify({"status": "error", "message": "Unknown algo"}), 400
 
+    result = subprocess.run([exe, field], capture_output=True, text=True)
     output = result.stdout
 
-    # parsing output JSON
     start = output.find("---START_JSON---") + len("---START_JSON---")
     end = output.find("---END_JSON---")
-    
+
     if start == -1 or end == -1:
         return jsonify({"status": "error", "message": "Invalid JSON output"}), 500
 
-    json_text = output[start:end].strip()
-
-    data = json.loads(json_text)
+    data = json.loads(output[start:end].strip())
 
     return jsonify({
         "status": "success",

@@ -22,6 +22,7 @@ struct CustomerData {
 // --- Global Variables ---
 int length = 0;
 const int numThreads = 4;
+// std::thread::hardware_concurrency()
 
 std::string csv_header = "";
 
