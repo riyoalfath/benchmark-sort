@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Parallel Radix Sort Dashboard</title>
+  </head>
+  <body class="font-inter">
+    <main class="relative min-h-screen flex flex-col bg-slate-50 overflow-hidden">
+      <div class="w-full max-w-6xl mx-auto px-4 md:px-5 py-24">
+        <div class="">
+          <div class="w-full max-w-7xl bg-white border border-slate-200 rounded-2xl">
+            <header class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+              <h2 class="font-semibold text-slate-800">Customer Table</h2>
+              <div>
+                <div class="relative">
+                  <button id="dropdownButton" class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-slate-700 bg-slate-100 border border-gray-300 rounded-md hover:bg-slate-200 cursor-pointer focus:outline-none">
+                    <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z" />
+                    </svg>Filter by<svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <!-- Dropdown menu -->
+                  <div id="dropdownMenu" class="absolute left-0 z-10 hidden w-32 mt-2 bg-white border border-slate-300 rounded-md shadow-lg">
+                    <ul class="p-2 text-sm text-slate-700">
+                      <li>
+                        <a href="#" class="block w-full p-2 rounded hover:bg-slate-200">CPP</a>
+                      </li>
+                      <li>
+                        <a href="#" class="block w-full p-2 rounded hover:bg-slate-200">MYSQL</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mt-1.5 ml-1">
+                    <p class="text-sm text-slate-700 font-medium">
+                      Duration: <span class="duration text-teal-600"></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </header>
+            <div></div>
+            <div class="p-3">
+              <!-- Table -->
+              <div class="overflow-x-auto">
+                <table class="table-auto w-full">
+                  <!-- Table header -->
+                  <thead class="text-[13px] text-slate-500/70">
+                    <tr>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left flex items-center">
+                          Invoice No
+                          <button class="invoice_no cursor-pointer">
+                            <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left flex items-center">
+                          Customer ID
+                          <button class="customer_id cursor-pointer">
+                            <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left">Category</div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left flex items-center">
+                          quantity
+                          <button class="quantity cursor-pointer">
+                            <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left flex items-center">
+                          Price
+                          <button class="price cursor-pointer">
+                            <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left">Payment Method</div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left flex items-center">
+                          Invoice Date
+                          <button class="invoice_date cursor-pointer">
+                            <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </th>
+                      <th class="px-5 py-2 first:pl-3 last:pr-3 bg-slate-100 first:rounded-l last:rounded-r last:pl-5 last:sticky last:right-0">
+                        <div class="font-medium text-left">Shopping Mall</div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <!-- Table body -->
+                  <tbody class="text-sm font-medium">
+                    <!-- Row -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const btn = document.getElementById('dropdownButton')
+      const menu = document.getElementById('dropdownMenu')
+      
+      btn.addEventListener('click', () => {
+        menu.classList.toggle('hidden')
+      })
+      
+      // Klik di luar → menutup dropdown
+      document.addEventListener('click', (e) => {
+        if (!btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add('hidden')
+        }
+      })
+      
+      let allData = []
+      let sortedData = []
+      let activeData = []
+      let rendered = 0
+      const chunk = 20
+      
+      // =============================
+      // Render chunk
+      // =============================
+      function renderNextChunk() {
+        const tbody = document.querySelector('tbody')
+        const next = activeData.slice(rendered, rendered + chunk)
+      
+        next.forEach((row) => {
+          tbody.innerHTML += `
+                                    <tr>
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-600">${row.invoice_no}</div>
+                                      </td>
+                              
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-600">${row.customer_id}</div>
+                                      </td>
+                              
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-500">${row.category}</div>
+                                      </td>
+            
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-500">${row.quantity}</div>
+                                      </td>
+                              
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-500">${row.price}</div>
+                                      </td>
+                              
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div>
+                                          ${row.payment_method === 'Credit Card' ? `<span class="px-2.5 py-1.5 text-xs font-medium text-white bg-gradient-to-tl from-slate-600 to-slate-400 rounded-sm">Credit Card</span>` : row.payment_method === 'Debit Card' ? `<span class="px-2.5 py-1.5 text-xs font-medium text-white bg-gradient-to-tl from-amber-500 to-yellow-400 rounded-sm">Debit Card</span>` : `<span class="px-2.5 py-1.5 text-xs font-medium text-white bg-gradient-to-tl from-emerald-500 to-teal-400 rounded-sm">Cash</span>`}</div>
+                                      </td>
+                              
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-500">${row.invoice_date}</div>
+                                      </td>
+                              
+                                      <td class="px-5 py-3 border-b border-slate-200">
+                                        <div class="text-slate-500">${row.shopping_mall}</div>
+                                      </td>
+                                    </tr>
+                                  `
+        })
+      
+        rendered += chunk
+      }
+      
+      // =============================
+      // Load normal data
+      // =============================
+      async function loadTable() {
+        const res = await fetch('/all')
+        const result = await res.json()
+      
+        if (result.status !== 'success') return
+      
+        allData = result.data
+        activeData = allData
+        rendered = 0
+      
+        document.querySelector('tbody').innerHTML = ''
+        renderNextChunk()
+      }
+      
+      // =============================
+      // Load sorted data via C++
+      // =============================
+      async function loadSorted(field) {
+        const res = await fetch(`/cpp-sort?field=${field}`)
+        const result = await res.json()
+      
+        sortedData = result.data
+        activeData = sortedData
+        rendered = 0
+      
+        document.querySelector('tbody').innerHTML = ''
+        renderNextChunk()
+      
+        document.querySelector('.duration').textContent = result.duration + 'ms'
+      }
+      
+      // =============================
+      // Infinite scroll
+      // =============================
+      window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+          renderNextChunk()
+        }
+      })
+      
+      // =============================
+      // INIT
+      // =============================
+      window.onload = () => {
+        loadTable()
+      
+        // Kolom sortable
+        document.querySelector('.invoice_no').addEventListener('click', () => loadSorted('invoice_no'))
+        document.querySelector('.customer_id').addEventListener('click', () => loadSorted('customer_id'))
+        document.querySelector('.quantity').addEventListener('click', () => loadSorted('quantity'))
+        document.querySelector('.price').addEventListener('click', () => loadSorted('price'))
+        document.querySelector('.invoice_date').addEventListener('click', () => loadSorted('invoice_date'))
+      }
+    </script>
+  </body>
+</html>
