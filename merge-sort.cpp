@@ -23,11 +23,12 @@ struct CustomerData {
 
 // Convert invoice date "DD/MM/YYYY" -> YYYYMMDD
 long long convertDate(const std::string &s) {
-    int d, m, y;
-    char sep;
-    std::stringstream ss(s);
-    ss >> d >> sep >> m >> sep >> y;
-    return (long long)y * 10000 + m * 100 + d;
+    int d, m, y; // day, month, year
+    char sep; // separator
+    std::stringstream ss(s); // create stringstream from input string
+    ss >> d >> sep >> m >> sep >> y; // match format DD/MM/YYYY
+                                     // ss adalah stream yang membaca dari string s
+    return (long long)y * 10000 + m * 100 + d; // return in format YYYYMMDD as long long
 }
 
 // ==========================================
@@ -54,8 +55,8 @@ public:
 // Bagian Implementasi (Modified for CustomerData)
 // ==========================================
 
-ParallelMergeSort::ParallelMergeSort(std::vector<CustomerData> *data) // Konstruktor
-    : data(data) { // Inisialisasi pointer ke vector
+ParallelMergeSort::ParallelMergeSort(std::vector<CustomerData> *data) // Konstruktor dengan
+    : data(data) { // Inisialisasi pointer ke data
 }
 
 ParallelMergeSort::~ParallelMergeSort() {} // Destructor
@@ -64,18 +65,18 @@ void ParallelMergeSort::recursiveSort(int left, int right, int available_threads
     // Jika data kecil, urutkan langsung dengan std::sort (Sequential)
     // Threshold 5000 digunakan untuk menyeimbangkan overhead thread
     const int THRESHOLD = 5000; // Batas data untuk beralih ke sort sequential, 
-                                // jika data lebih kecil dari ini maka gunakan std::sort
+                                // jika data lebih kecil dari ini maka langsung gunakan std::sort
     
     if (right - left < THRESHOLD) { // Base case: gunakan std::sort untuk data kecil
         // Modified: Use lambda to compare based on sort_key
-        std::sort(data->begin() + left, data->begin() + right + 1, 
+        std::sort(data->begin() + left, data->begin() + right + 1,
             [](const CustomerData &a, const CustomerData &b) {
                 return a.sort_key < b.sort_key;
             }); 
         return;
     }
     
-    if (left >= right) { // Base case: subarray dengan 0 atau 1 elemen
+    if (left >= right) { // Base case: subarray dengan 0 atau 1 elemen langsung dikembalikan
         return;
     }
 
@@ -85,59 +86,59 @@ void ParallelMergeSort::recursiveSort(int left, int right, int available_threads
     // Jika masih ada thread yang bisa dipakai (>1), pecah tugas ke thread baru
     if (available_threads > 1) {
         // Thread baru mengerjakan sisi kiri dengan setengah jumlah thread tersisa
-        std::thread thread_left([this, left, mid, available_threads] {
-            this->recursiveSort(left, mid, available_threads / 2); 
+        std::thread thread_left([this, left, mid, available_threads] { // this adalah pointer ke objek ParallelMergeSort, left dan mid adalah batas array
+            this->recursiveSort(left, mid, available_threads / 2); // Gunakan setengah thread untuk sisi kiri
         });
 
         // Thread saat ini (Current Thread) mengerjakan sisi kanan dengan sisa thread setelah dipakai kiri
-        this->recursiveSort(mid + 1, right, available_threads - (available_threads / 2));
+        this->recursiveSort(mid + 1, right, available_threads - (available_threads / 2)); // Sisa thread untuk sisi kanan
 
         // Tunggu thread kiri selesai
-        thread_left.join();
+        thread_left.join(); // Menunggu thread kiri selesai sebelum melanjutkan
 
     } else {
         // Jika thread tersedia sudah habis, jalankan rekursif biasa (single thread)
-        this->recursiveSort(left, mid, 1);
-        this->recursiveSort(mid + 1, right, 1);
+        this->recursiveSort(left, mid, 1); // Hanya 1 thread untuk sisi kiri
+        this->recursiveSort(mid + 1, right, 1); // Hanya 1 thread untuk sisi kanan
     }
     
     // Merge dua bagian yang sudah terurutkan
     std::vector<CustomerData> result; // buat vector sementara untuk menyimpan hasil merge
     result.reserve(right - left + 1); // Optimasi alokasi memori
 
-    int i = left;
-    int j = mid + 1;
+    int i = left; // Pointer untuk bagian kiri
+    int j = mid + 1; // Pointer untuk bagian kanan
 
-    while (i <= mid && j <= right) {
+    while (i <= mid && j <= right) { // Jika i kurang dari mid dan j kurang dari right
         // Modified: Compare sort_key
-        if ((*data)[i].sort_key <= (*data)[j].sort_key) {
-            result.push_back((*data)[i]);
+        if ((*data)[i].sort_key <= (*data)[j].sort_key) { // Jika elemen i lebih kecil atau sama dengan elemen j
+            result.push_back((*data)[i]); // Tambahkan elemen i ke result 
             i++;
         } else {
-            result.push_back((*data)[j]);
+            result.push_back((*data)[j]); // tambahkan elemen j ke result
             j++;
         }
     }
 
-    while (i <= mid) {
-        result.push_back((*data)[i]);
+    while (i <= mid) { 
+        result.push_back((*data)[i]); // Tambahkan sisa elemen i ke result
         i++;
     }
 
     while (j <= right) {
-        result.push_back((*data)[j]);
+        result.push_back((*data)[j]); // Tambahkan sisa elemen j ke result
         j++;
     }
 
     // Salin kembali hasil merge ke array utama
     for (int k = 0; k < result.size(); k++) {
-        (*data)[left + k] = result[k];
+        (*data)[left + k] = result[k]; // Salin elemen dari result ke data
     }
 }
 
 void ParallelMergeSort::sort() {
-    if (!data || data->empty()) {
-        return;
+    if (!data || data->empty()) { // Cek jika data kosong
+        return;                   // Jika kosong, tidak perlu di-sort
     }
 
     // Deteksi otomatis jumlah Core CPU
