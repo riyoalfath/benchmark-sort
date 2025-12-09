@@ -83,7 +83,7 @@ int ParallelQuickSort::partition(int low, int high) {
 void ParallelQuickSort::recursiveSort(int left, int right, int available_threads) {
     // Jika data kecil, urutkan langsung dengan std::sort (Sequential)
     // Threshold 5000 digunakan untuk menyeimbangkan overhead thread
-    const int THRESHOLD = 5000; 
+    const int THRESHOLD = 100000; 
     
     // Base case: jika range tidak valid atau data sedikit
     if (left >= right) return;
@@ -129,7 +129,7 @@ void ParallelQuickSort::sort() {
     }
 
     // Deteksi otomatis jumlah Core CPU
-    unsigned int cores = std::thread::hardware_concurrency();
+    unsigned int cores = std::thread::hardware_concurrency(); // std::thread::hardware_concurrency()
     
     // Safety check: jika hardware_concurrency return 0 (gagal), set default ke 2
     if (cores == 0) cores = 2;

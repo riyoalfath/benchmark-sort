@@ -142,7 +142,7 @@ void ParallelMergeSort::sort() {
     }
 
     // Deteksi otomatis jumlah Core CPU
-    unsigned int cores = std::thread::hardware_concurrency();
+    unsigned int cores = std::thread::hardware_concurrency(); // Mendapatkan jumlah core logical CPU, std::thread::hardware_concurrency()
     
     // Safety check: jika hardware_concurrency return 0 (gagal), set default ke 2
     if (cores == 0) cores = 2;
